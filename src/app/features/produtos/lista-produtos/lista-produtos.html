@@ -1,4 +1,4 @@
-@for (item of produtos; track item){
+@for (item of produtos(); track item){
     <app-produto 
     [nome] = "item.nome" 
     [preco] = "item.preco"
@@ -6,3 +6,6 @@
     >
     </app-produto>
 }
+<p><button (click)="adicionarProduto()" >adicionar Prodution </button></p>
+<h2>total de Produtos: {{totalProdutos()}} </h2>
+<h3>valor total: {{valorTotal() | precoFormatado }} </h3>
