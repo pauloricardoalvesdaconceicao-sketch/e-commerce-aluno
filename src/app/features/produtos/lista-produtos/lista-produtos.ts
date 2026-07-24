@@ -5,6 +5,8 @@ import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { error } from 'console';
 @Component({
   selector: 'app-lista-produtos',
   imports: [Produto,PrecoFormatadoPipe, UpperCasePipe],
@@ -12,29 +14,12 @@ import { UpperCasePipe } from '@angular/common';
   styleUrl: './lista-produtos.css',
 })
 export class ListaProdutos {
-  //lista de produtos de dados - array
- produtos = signal([
-    { 
-      nome: 'Teclado Gamer', 
-      preco:149.00
-    },
-    {
-      nome: 'Mouse Gamer', 
-      preco:299.99
-    },
-    {
-      nome: 'Monitor Gamer', 
-      preco:1599.99
-    },
-    {
-      nome: 'Desktop Gamer', 
-      preco:4999.99
-    },
-    {
-      nome: 'Headset Gamer', 
-      preco:699.99
-    }
-  ]);
+  //signal
+ produtos = signal<{nome: string; preco: number}[]>([]);
+ carregando = signal(true);
+ produtoSelecionado = signal<string | null >(null);
+ carrinho = signal<{nome: string; preco: number}[]>([]);
+    
   //funçao para exibier produtos selecionados pelos usuario console 
   exibirProduto (nome: string){
     console.log ('Produto Selecionado: ', nome);
@@ -64,8 +49,31 @@ substituirProduto(){
     { nome:'headset', preco:30},
   ]);
 }
+
+carregarProdutos(){
+  this.carregando.set(true);
+  this.http.get<{title: string; price: number}[]>
+  ('https://fakestoreapi.com/products').subscribe({
+    next: (dados) => {
+      const produtosFormatados = dados.map(p => ({
+        nome: p.title,
+        preco: p.price,
+      }));
+      this.produtos.set(produtosFormatados);
+      this.carregando.set(false);
+    },
+    error: (error) => {
+      console.error('Error ao carregar produtos: ', error );
+      this.carregando.set(false);
+    } 
+    
+  });
+
+}
 // metodo para monitorar alterações em tempo em tempo real usando metodo effect()
-constructor(){
+constructor(private http: HttpClient){
+  // carrega o API
+  this.carregarProdutos();
   effect(() => {
     console.log('Lista de Produtos Alterados: ',this.produtos());
   });
@@ -78,10 +86,7 @@ constructor(){
     }
   });
 }
-// metodo para criar um estado de seleção com signal string | null 
-produtoSelecionado = signal <string | null>(null);
-//metodo para criar um estado para carrinho com signal
-carrinho = signal <{nome: string; preco: number}[]>([]);
+
 adicionarAoCarrinho(produto:{nome: string; preco: number}){
   this.carrinho.update(listaAtual =>
   [...listaAtual, produto]
