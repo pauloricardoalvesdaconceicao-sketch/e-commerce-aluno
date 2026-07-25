@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { Produto } from '../produto/produto';
 import { signal } from '@angular/core';
 import { computed } from '@angular/core';
@@ -7,6 +7,8 @@ import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { error } from 'console';
+import { produtoService } from '../produtos.service';
+import { Inject } from '@angular/core';
 @Component({
   selector: 'app-lista-produtos',
   imports: [Produto,PrecoFormatadoPipe, UpperCasePipe],
@@ -51,27 +53,21 @@ substituirProduto(){
 }
 
 carregarProdutos(){
-  this.carregando.set(true);
-  this.http.get<{title: string; price: number}[]>
-  ('https://fakestoreapi.com/products').subscribe({
-    next: (dados) => {
-      const produtosFormatados = dados.map(p => ({
-        nome: p.title,
-        preco: p.price,
-      }));
-      this.produtos.set(produtosFormatados);
-      this.carregando.set(false);
-    },
-    error: (error) => {
-      console.error('Error ao carregar produtos: ', error );
-      this.carregando.set(false);
-    } 
-    
-  });
-
+this.carregando.set(true);
+this.produtosService.buscarProduto().subscribe({
+  next: (dados) => {
+    const produtos = this.produtosService.transformarProduto(dados);
+    this.produtos.set(produtos);
+    this.carregando.set(false);
+  },
+  error: (erro) => {
+    console.error('Erro ao carregar produtos', erro);
+    this.carregando.set(false);
+  }
+});
 }
 // metodo para monitorar alterações em tempo em tempo real usando metodo effect()
-constructor(private http: HttpClient){
+constructor(){
   // carrega o API
   this.carregarProdutos();
   effect(() => {
@@ -99,5 +95,7 @@ totalCarrinho = computed(()=>
 {return this.carrinho().reduce((total, item) =>
 total + item.preco,0
 )});
+
+private produtosService = inject(produtoService);
 
 }
