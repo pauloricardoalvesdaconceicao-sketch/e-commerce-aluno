@@ -21,6 +21,7 @@ export class ListaProdutos {
  carregando = signal(true);
  produtoSelecionado = signal<string | null >(null);
  carrinho = signal<{nome: string; preco: number}[]>([]);
+ erro = signal < string | null > (null);
     
   //funçao para exibier produtos selecionados pelos usuario console 
   exibirProduto (nome: string){
@@ -62,6 +63,7 @@ this.produtosService.buscarProduto().subscribe({
   },
   error: (erro) => {
     console.error('Erro ao carregar produtos', erro);
+    this.erro.set('Erro ao carregar produtos. por favor, tente novamente!');
     this.carregando.set(false);
   }
 });
