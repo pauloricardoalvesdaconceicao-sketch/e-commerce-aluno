@@ -7,8 +7,10 @@ import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { error } from 'console';
-import { produtoService } from '../produtos.service';
+import { produtoService } from '../../../core/services/produtos.service';
 import { Inject } from '@angular/core';
+import { Carrinho } from '../../carrinho/carrinho/carrinho';
+import { CarrinhoService } from '../../../core/services/carrinho.service';
 @Component({
   selector: 'app-lista-produtos',
   imports: [Produto,PrecoFormatadoPipe, UpperCasePipe],
@@ -20,7 +22,6 @@ export class ListaProdutos {
  produtos = signal<{nome: string; preco: number}[]>([]);
  carregando = signal(true);
  produtoSelecionado = signal<string | null >(null);
- carrinho = signal<{nome: string; preco: number}[]>([]);
  erro = signal < string | null > (null);
     
   //funçao para exibier produtos selecionados pelos usuario console 
@@ -86,18 +87,12 @@ constructor(){
 }
 
 adicionarAoCarrinho(produto:{nome: string; preco: number}){
-  this.carrinho.update(listaAtual =>
-  [...listaAtual, produto]
-  ); 
+  this.carrinhoService.adicionar(produto);
     }
-     //metodo para calcular a quantidade total de item no carrinho
-quantidadeCarrinho = computed(() => this.carrinho().length);
-//metodo para calcular o valor todal do carrinho
-totalCarrinho = computed(()=>
-{return this.carrinho().reduce((total, item) =>
-total + item.preco,0
-)});
 
 private produtosService = inject(produtoService);
+public carrinhoService = inject(CarrinhoService);
 
+quantidadeCarrinho = this.carrinhoService.quantidadeItens;
+totalCarrinho = this.carrinhoService.totalItens;
 }

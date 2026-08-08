@@ -50,10 +50,10 @@
 <hr>
 <h2>Carrinho</h2>
 <hr>
-@for (item of carrinho(); track $index){
+@for (item of carrinhoService.item(); track $index){
     <p>{{ item.nome }} {{ item.preco | precoFormatado }}</p>
 
 }
 <hr>
-<p><strong>quantidade de item:</strong>{{quantidadeCarrinho()}}</p>
-<p><strong>valor total carrinho:</strong>{{totalCarrinho() | precoFormatado }}</p>
+<p><strong>quantidade de item:</strong>{{ carrinhoService.quantidadeItens() }}</p>
+<p><strong>valor total carrinho:</strong>{{ carrinhoService.totalItens() | precoFormatado }}</p>
