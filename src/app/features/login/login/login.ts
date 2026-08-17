@@ -16,6 +16,7 @@ formulario = new FormGroup({
 email: new FormControl('', [Validators.required, Validators.email]),
 senha: new FormControl('', [Validators.required, Validators.minLength(3)]),
 });
+
 entrar() {
 this.erroLogin.set(false);
 if (this.formulario.invalid) {
@@ -27,6 +28,10 @@ const senha = this.formulario.value.senha ?? '';
 const loginRealizado = this.authService.login(email, senha);
 if (!loginRealizado) {
 this.erroLogin.set(true);
+return;
+}
+if (this.authService.ehAdmin()) {
+this.router.navigateByUrl('/admin');
 return;
 }
 this.router.navigateByUrl('/produtos');
