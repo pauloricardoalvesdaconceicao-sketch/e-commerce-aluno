@@ -1,13 +1,27 @@
-import { Component } from '@angular/core';
-
-@Component({
-  selector: 'app-carrinho',
-  imports: [],
-  templateUrl: './carrinho.html',
-  styleUrl: './carrinho.css',
+import { Injectable, signal, computed } from '@angular/core';
+type ItemCarrinho = {
+nome: string;
+preco: number;
+};
+@Injectable({
+providedIn: 'root',
 })
-export class Carrinho {
-  //lógica de carrinho virá na proximas aulas
-  //por ora, apenas exibi a página carrinho
-  
+export class CarrinhoService {
+// STATE (GLOBAL)
+private carrinho = signal<ItemCarrinho[]>([]);
+// SELECTORS
+itens = computed(() => this.carrinho());
+quantidade = computed(() => this.carrinho().length);
+total = computed(() =>
+this.carrinho().reduce((total, item) => total + item.preco, 0)
+);
+carrinhoVazio = computed(() => this.carrinho().length === 0);
+
+// ACTIONS
+adicionar(produto: ItemCarrinho) {
+this.carrinho.update(lista => [...lista, produto]);
+}
+limpar() {
+this.carrinho.set([]);
+}
 }
