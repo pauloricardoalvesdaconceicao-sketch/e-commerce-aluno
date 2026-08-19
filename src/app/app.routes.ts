@@ -13,7 +13,7 @@ loadComponent: () => import('./features/produtos/lista-produtos/lista-produtos')
 {
 path: 'carrinho',
 canActivate: [authGuard],
-loadComponent: () => import('./features/carrinho/carrinho/carrinho').then((m) => m.Carrinho),
+loadComponent: () => import('./features/carrinho/carrinho/carrinho').then((m) => m.CarrinhoService),
 },
 {
 path: 'checkout',
@@ -24,6 +24,10 @@ loadComponent: () => import('./features/checkout/checkout/checkout').then((m) =>
 path: 'admin',
 canActivate: [adminGuard],
 loadComponent: () => import('./features/admin/admin/admin').then((m) => m.Admin),
+},
+{
+path: 'acesso-negado',
+loadComponent: () => import('./features/acesso-negado/acesso-negado/acesso-negado').then((m) => m.AcessoNegado,),
 },
 {
 path: 'login',
