@@ -12,13 +12,13 @@ type Produto = {
 };
 @Injectable({ providedIn: 'root'})
 
-export class produtoService{
+export class ProdutosService {
     private http = inject(HttpClient);
     private API = 'https://fakestoreapi.com/products';
-    buscarProduto(){
+    buscarProdutos(){
         return this.http.get<ProdutoApi[]>(this.API);
     }
-    transformarProduto(dados: ProdutoApi[]): Produto[] {
+    transformarProdutos(dados: ProdutoApi[]): Produto[] {
         return dados.map((p) => ({
             nome: p.title,
             preco: p.price
