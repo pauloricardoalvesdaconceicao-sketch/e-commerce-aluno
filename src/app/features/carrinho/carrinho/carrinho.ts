@@ -1,27 +1,22 @@
-import { Injectable, signal, computed } from '@angular/core';
-type ItemCarrinho = {
-nome: string;
-preco: number;
-};
-@Injectable({
-providedIn: 'root',
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
+@Component({
+selector: 'app-carrinho',
+imports: [RouterLink, MatButtonModule],
+templateUrl: './carrinho.html',
+styleUrl: './carrinho.css',
 })
-export class CarrinhoService {
-// STATE (GLOBAL)
-private carrinho = signal<ItemCarrinho[]>([]);
-// SELECTORS
-itens = computed(() => this.carrinho());
-quantidade = computed(() => this.carrinho().length);
-total = computed(() =>
-this.carrinho().reduce((total, item) => total + item.preco, 0)
-);
-carrinhoVazio = computed(() => this.carrinho().length === 0);
-
-// ACTIONS
-adicionar(produto: ItemCarrinho) {
-this.carrinho.update(lista => [...lista, produto]);
+export class Carrinho {
+// A página do carrinho passa a consumir o estado global do carrinho.
+carrinhoFacade = inject(CarrinhoFacade);
+removerItem(indice: number) {
+// Remove um item específico da lista.
+this.carrinhoFacade.removerItem(indice);
 }
-limpar() {
-this.carrinho.set([]);
+limparCarrinho() {
+// Limpa todos os itens do carrinho.
+this.carrinhoFacade.limparCarrinho();
 }
 }
