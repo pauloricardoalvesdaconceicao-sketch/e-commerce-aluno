@@ -13,7 +13,7 @@ loadComponent: () => import('./features/produtos/lista-produtos/lista-produtos')
 {
 path: 'carrinho',
 canActivate: [authGuard],
-loadComponent: () => import('./features/carrinho/carrinho/carrinho').then((m) => m.CarrinhoService),
+loadComponent: () => import('./features/carrinho/carrinho/carrinho').then((m) => m.Carrinho),
 },
 {
 path: 'checkout',
