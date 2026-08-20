@@ -1,7 +1,8 @@
-import { Component, signal, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ProdutosService } from '../../../core/services/produtos.service';
 import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
+import { ItemCarrinho } from '../../../core/models/item-carrinho';
+import { ProdutosService } from '../../../core/services/produtos.service';
 import { Produto } from '../produto/produto';
 @Component({
 selector: 'app-lista-produtos',
@@ -10,22 +11,16 @@ templateUrl: './lista-produtos.html',
 styleUrl: './lista-produtos.css',
 })
 export class ListaProdutos {
-// INJECTS
 produtosService = inject(ProdutosService);
 carrinhoFacade = inject(CarrinhoFacade);
-quantidadeCarrinho = this.carrinhoFacade.quantidade;
-totalCarrinho = this.carrinhoFacade.total;
-// === SIGNALS
 produtos = signal<{ nome: string; preco: number }[]>([]);
 produtoSelecionado = signal<string | null>(null);
 carregando = signal(true);
 erro = signal<string | null>(null);
-// === COMPUTED
 totalProdutos = computed(() => this.produtos().length);
 valorTotal = computed(() => {
 return this.produtos().reduce((total, item) => total + item.preco, 0);
 });
-// === CONSTRUTOR
 constructor() {
 this.carregarProdutos();
 effect(() => {
@@ -41,7 +36,6 @@ document.title = `(${this.totalProdutos()}) Minha Loja`;
 });
 }
 
-// === MÉTODO HTTP (API)
 carregarProdutos() {
 this.erro.set(null);
 this.carregando.set(true);
@@ -58,7 +52,6 @@ this.carregando.set(false);
 },
 });
 }
-// === DEMAIS MÉTODOS
 exibirProduto(nome: string) {
 this.produtoSelecionado.set(nome);
 }
@@ -68,7 +61,7 @@ this.produtos.update((listaAtual) => [...listaAtual, { nome: 'Teclado', preco: 2
 substituirProdutos() {
 this.produtos.set([{ nome: 'Produto novo', preco: 999 }]);
 }
-adicionarAoCarrinho(produto: { nome: string; preco: number }) {
+adicionarAoCarrinho(produto: ItemCarrinho) {
 this.carrinhoFacade.adicionarProduto(produto);
 }
 }
